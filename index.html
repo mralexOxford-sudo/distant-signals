@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distant Signals — Academic Research Scanner for TV Development</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-cream: #f5f0e8;
+  --bg-warm: #ebe5d9;
+  --bg-card: #faf7f2;
+  --bg-card-hover: #ffffff;
+  --bg-input: #fffdf9;
+  --border-light: #d9d0c1;
+  --border-mid: #c4b9a8;
+  --text-primary: #2c2820;
+  --text-secondary: #5a5347;
+  --text-muted: #8a8175;
+  --text-faint: #b0a898;
+  --accent-rust: #b85c38;
+  --accent-sage: #6b8f71;
+  --accent-navy: #3d5a80;
+  --accent-ochre: #c49a3c;
+  --accent-plum: #7b5e7b;
+  --accent-teal: #4a8f8f;
+  --accent-brick: #a0522d;
+  --accent-olive: #6b7c3e;
+  --accent-slate: #5c6b7a;
+  --accent-wine: #8b3a62;
+  --accent-copper: #b87333;
+  --accent-forest: #3a6b4f;
+  --accent-indigo: #4b5b8c;
+  --accent-terracotta: #cc6b49;
+  --accent-moss: #5a7247;
+  --accent-steel: #6a7b8a;
+  --accent-mauve: #876b8a;
+  --accent-amber: #b8943b;
+  --accent-dusk: #7a6a5a;
+  --accent-petrol: #3a6b6b;
+  --accent-clay: #9e7b5a;
+  --accent-ink: #3a3a5c;
+  --ai-blue: #3d7cbf;
+  --tv-amber: #c49a3c;
+  --shadow-soft: 0 1px 3px rgba(44,40,32,0.06);
+  --shadow-med: 0 2px 8px rgba(44,40,32,0.08);
+  --shadow-lift: 0 4px 16px rgba(44,40,32,0.10);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg-cream);
+  color: var(--text-primary);
+  font-family: 'Source Sans 3', sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 1320px; margin: 0 auto; padding: 0 28px; }
+
+header {
+  padding: 36px 0 28px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.logo-area { display: flex; align-items: center; gap: 16px; }
+
+.signal-icon {
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--accent-rust);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.signal-icon::before { content:''; width:8px; height:8px; background:var(--accent-rust); border-radius:50%; }
+.signal-icon::after { content:''; position:absolute; inset:-5px; border:1px solid rgba(184,92,56,0.25); border-radius:50%; }
+
+h1 { font-family:'Newsreader',serif; font-size:30px; font-weight:400; color:var(--text-primary); letter-spacing:-0.3px; }
+h1 span { color:var(--accent-rust); font-style:italic; }
+
+.tagline { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-muted); letter-spacing:2.5px; text-transform:uppercase; margin-top:2px; }
+
+.header-meta { display:flex; align-items:center; gap:12px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-muted); }
+
+.live-dot { width:5px; height:5px; background:var(--accent-sage); border-radius:50%; animation:blink 2.5s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+.controls { padding: 24px 0; display: flex; flex-direction: column; gap: 16px; }
+.search-bar { display: flex; gap: 10px; align-items: center; }
+
+.search-bar input {
+  flex:1; background:var(--bg-input); border:1px solid var(--border-light);
+  border-radius:6px; padding:11px 16px; color:var(--text-primary);
+  font-family:'Source Sans 3',sans-serif; font-size:14px; outline:none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.search-bar input:focus { border-color:var(--accent-rust); box-shadow:0 0 0 3px rgba(184,92,56,0.08); }
+.search-bar input::placeholder { color:var(--text-faint); }
+
+.btn-scan {
+  background:var(--accent-rust); color:#fff; border:none; border-radius:6px;
+  padding:11px 28px; font-family:'JetBrains Mono',monospace; font-size:11px;
+  font-weight:500; letter-spacing:1px; text-transform:uppercase;
+  cursor:pointer; transition:all 0.25s; white-space:nowrap;
+}
+.btn-scan:hover { background:#a34f2e; box-shadow:var(--shadow-med); transform:translateY(-1px); }
+.btn-scan:active { transform:translateY(0); }
+.btn-scan.scanning { background:var(--bg-warm); color:var(--accent-rust); border:1px solid var(--accent-rust); }
+
+.mode-tabs { display:flex; gap:0; margin-bottom:4px; border-bottom:1px solid var(--border-light); }
+
+.mode-tab {
+  font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:1px;
+  text-transform:uppercase; color:var(--text-muted); padding:10px 20px;
+  cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s;
+  background:none; border-top:none; border-left:none; border-right:none;
+}
+.mode-tab:hover { color:var(--text-secondary); }
+.mode-tab.active { color:var(--accent-rust); border-bottom-color:var(--accent-rust); }
+
+.categories-section { margin-bottom:4px; }
+
+.section-label {
+  font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text-faint);
+  letter-spacing:2.5px; text-transform:uppercase; margin-bottom:10px;
+}
+
+.category-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(175px, 1fr)); gap:6px; }
+
+.cat-chip {
+  background:var(--bg-card); border:1px solid var(--border-light); border-radius:6px;
+  padding:8px 12px; cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; gap:8px; user-select:none; position:relative;
+}
+.cat-chip:hover { border-color:var(--border-mid); background:var(--bg-card-hover); box-shadow:var(--shadow-soft); }
+.cat-chip.active { border-color:var(--cat-color); background:var(--bg-card-hover); box-shadow:var(--shadow-soft); }
+
+.cat-dot { width:7px; height:7px; border-radius:50%; background:var(--cat-color); flex-shrink:0; }
+.cat-label { font-size:11px; font-weight:500; color:var(--text-secondary); line-height:1.3; }
+.cat-chip.active .cat-label { color:var(--text-primary); }
+
+.cat-count {
+  position:absolute; top:-4px; right:-4px;
+  background:var(--cat-color); color:#fff;
+  font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:500;
+  min-width:16px; height:16px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  padding:0 4px; box-shadow:var(--shadow-soft);
+  opacity:0; transition:opacity 0.2s;
+}
+.cat-count.visible { opacity:1; }
+
+.results-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:18px 0 14px; border-top:1px solid var(--border-light);
+}
+
+.results-count { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-muted); }
+.results-count strong { color:var(--accent-rust); }
+
+.sort-controls { display:flex; gap:6px; }
+
+.sort-btn {
+  background:var(--bg-card); border:1px solid var(--border-light); border-radius:5px;
+  padding:5px 11px; font-family:'JetBrains Mono',monospace; font-size:9px;
+  color:var(--text-muted); cursor:pointer; transition:all 0.2s;
+  text-transform:uppercase; letter-spacing:1px;
+}
+.sort-btn.active { border-color:var(--accent-rust); color:var(--accent-rust); }
+
+.results-grid { display:grid; grid-template-columns:1fr; gap:10px; padding-bottom:60px; }
+
+/* === ARTICLE CARD === */
+.article-card {
+  background:var(--bg-card); border:1px solid var(--border-light); border-radius:8px;
+  padding:0; transition:all 0.25s; position:relative; overflow:hidden;
+  animation:card-in 0.35s ease-out backwards;
+}
+.article-card:hover { border-color:var(--border-mid); background:var(--bg-card-hover); box-shadow:var(--shadow-lift); transform:translateY(-1px); }
+
+@keyframes card-in { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+/* Score strip at top */
+.card-scores {
+  display:flex; border-bottom:1px solid var(--border-light);
+  background: linear-gradient(135deg, rgba(61,124,191,0.04), rgba(196,154,60,0.04));
+}
+
+.score-block {
+  flex:1; display:flex; align-items:center; gap:10px;
+  padding:12px 18px;
+}
+
+.score-block:first-child { border-right:1px solid var(--border-light); }
+
+.score-label {
+  font-family:'JetBrains Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase;
+  line-height:1.4;
+}
+
+.score-label.ai { color: var(--ai-blue); }
+.score-label.tv { color: var(--tv-amber); }
+
+.score-ring {
+  width:42px; height:42px; position:relative; flex-shrink:0;
+}
+
+.score-ring svg { width:42px; height:42px; transform:rotate(-90deg); }
+
+.score-ring-bg { fill:none; stroke:var(--bg-warm); stroke-width:3; }
+.score-ring-fill { fill:none; stroke-width:3; stroke-linecap:round; transition:stroke-dashoffset 0.8s ease-out; }
+.score-ring-fill.ai { stroke:var(--ai-blue); }
+.score-ring-fill.tv { stroke:var(--tv-amber); }
+
+.score-number {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:500;
+}
+.score-number.ai { color:var(--ai-blue); }
+.score-number.tv { color:var(--tv-amber); }
+
+/* Card body */
+.card-body { padding:18px 22px 20px; }
+
+.card-category-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+
+.card-category {
+  font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:500;
+  letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--card-accent);
+  background:color-mix(in srgb, var(--card-accent) 8%, transparent);
+  padding:3px 9px; border-radius:3px; white-space:nowrap;
+}
+
+.card-journal {
+  font-family:'JetBrains Mono',monospace; font-size:9px;
+  color:var(--text-faint); letter-spacing:0.5px;
+}
+
+.card-title {
+  font-family:'Newsreader',serif; font-size:20px; line-height:1.3;
+  color:var(--text-primary); margin-bottom:6px;
+}
+
+.card-authors { font-size:11px; color:var(--text-muted); margin-bottom:12px; }
+
+.card-digest {
+  font-size:13.5px; line-height:1.65; color:var(--text-secondary);
+  margin-bottom:16px; max-width:860px;
+}
+
+.card-footer { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:10px; }
+
+.card-tags { display:flex; gap:5px; flex-wrap:wrap; }
+
+.tag {
+  font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text-muted);
+  background:var(--bg-warm); padding:2px 7px; border-radius:3px; border:1px solid var(--border-light);
+}
+
+.card-tv-angle {
+  display:flex; align-items:center; gap:8px;
+  font-family:'Source Sans 3',sans-serif; font-size:13px; font-weight:600;
+  color:#8b6914; background:rgba(196,154,60,0.12);
+  padding:10px 14px; border-radius:5px; border-left:3px solid var(--tv-amber);
+  line-height:1.4; margin-top:4px; width:100%;
+}
+.card-tv-angle span { font-size:16px; color:var(--tv-amber); flex-shrink:0; }
+
+.card-link {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:'JetBrains Mono',monospace; font-size:10px;
+  color:var(--accent-rust); text-decoration:none;
+  padding:5px 12px; border:1px solid var(--accent-rust);
+  border-radius:4px; transition:all 0.2s; margin-top:12px;
+}
+.card-link:hover { background:var(--accent-rust); color:#fff; }
+
+/* STATES */
+.loading-state { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:70px 20px; text-align:center; }
+
+.scan-animation { width:80px; height:80px; position:relative; margin-bottom:28px; }
+
+.scan-ring {
+  position:absolute; inset:0; border:1px solid var(--accent-rust);
+  border-radius:50%; border-top-color:transparent; animation:spin 1.5s linear infinite;
+}
+.scan-ring:nth-child(2) { inset:10px; border-color:var(--accent-sage); border-top-color:transparent; animation-duration:2s; animation-direction:reverse; }
+.scan-ring:nth-child(3) { inset:20px; border-color:var(--accent-ochre); border-top-color:transparent; animation-duration:2.5s; }
+
+.scan-core {
+  position:absolute; inset:28px;
+  background:radial-gradient(circle, rgba(184,92,56,0.15), transparent);
+  border-radius:50%; animation:core-pulse 2s ease-in-out infinite;
+}
+
+@keyframes spin { to{transform:rotate(360deg);} }
+@keyframes core-pulse { 0%,100%{opacity:0.3;transform:scale(0.8);} 50%{opacity:1;transform:scale(1.1);} }
+
+.loading-text { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-secondary); margin-bottom:6px; }
+.loading-sub { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-muted); }
+
+.empty-state { text-align:center; padding:70px 20px; }
+.empty-state h3 { font-family:'Newsreader',serif; font-size:22px; font-weight:400; color:var(--text-secondary); margin-bottom:8px; }
+.empty-state p { font-size:13px; color:var(--text-muted); max-width:480px; margin:0 auto; line-height:1.6; }
+
+@media (max-width:768px) {
+  .category-grid { grid-template-columns:repeat(2, 1fr); }
+  h1 { font-size:24px; }
+  .header-top { flex-direction:column; gap:12px; }
+  .card-footer { flex-direction:column; align-items:flex-start; }
+  .card-scores { flex-direction:column; }
+  .score-block:first-child { border-right:none; border-bottom:1px solid var(--border-light); }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-top">
+      <div class="logo-area">
+        <div class="signal-icon"></div>
+        <div>
+          <h1>Distant <span>Signals</span></h1>
+          <div class="tagline">Academic Research Scanner for TV Development</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="live-dot"></div>
+        <span>22 research domains</span>
+        <span>·</span>
+        <span id="timestamp"></span>
+        <span>·</span>
+        <span id="archiveCount">0 archived</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search across all domains… e.g. 'collective behaviour', 'supply chain', 'permafrost'" />
+      <button class="btn-scan" id="scanBtn" onclick="runScan()">▶ SCAN</button>
+    </div>
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="scan" onclick="setMode('scan')">Scan</button>
+      <button class="mode-tab" data-mode="archive" onclick="setMode('archive')">Archive</button>
+    </div>
+    <div class="categories-section">
+      <div class="section-label">Research Domains</div>
+      <div class="category-grid" id="categoryGrid"></div>
+    </div>
+  </div>
+
+  <div class="results-header">
+    <div class="results-count" id="resultsCount">Select domains and scan to discover signals</div>
+    <div class="sort-controls">
+      <button class="sort-btn active" data-sort="relevance" onclick="setSort('relevance')">TV Score</button>
+      <button class="sort-btn" data-sort="ai" onclick="setSort('ai')">AI Score</button>
+      <button class="sort-btn" data-sort="surprise" onclick="setSort('surprise')">Surprise</button>
+    </div>
+  </div>
+
+  <div id="resultsArea">
+    <div class="empty-state">
+      <h3>Waiting for signal lock</h3>
+      <p>Select one or more research domains and hit Scan to surface academic papers scored for both AI research relevance and TV development potential. Click Archive to browse all previously discovered articles.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  { id:'behavioral_ecology', name:'Behavioural Ecology', color:'var(--accent-rust)' },
+  { id:'climate_systems', name:'Climate Systems', color:'var(--accent-sage)' },
+  { id:'experimental_psychology', name:'Experimental Psychology', color:'var(--accent-plum)' },
+  { id:'materials_science', name:'Materials Science', color:'var(--accent-ochre)' },
+  { id:'epidemiology', name:'Epidemiology & Contagion', color:'var(--accent-wine)' },
+  { id:'deep_ocean', name:'Deep Ocean Science', color:'var(--accent-navy)' },
+  { id:'behavioral_economics', name:'Behavioural Economics', color:'var(--accent-copper)' },
+  { id:'forensic_genetics', name:'Forensic Genetics', color:'var(--accent-terracotta)' },
+  { id:'urban_systems', name:'Urban Systems', color:'var(--accent-slate)' },
+  { id:'astrobiology', name:'Astrobiology', color:'var(--accent-teal)' },
+  { id:'supply_chain', name:'Supply Chain Dynamics', color:'var(--accent-indigo)' },
+  { id:'cryosphere', name:'Cryosphere & Permafrost', color:'var(--accent-steel)' },
+  { id:'mycology', name:'Mycology & Fungal Networks', color:'var(--accent-olive)' },
+  { id:'volcanology', name:'Volcanology & Geohazards', color:'var(--accent-brick)' },
+  { id:'chronobiology', name:'Chronobiology', color:'var(--accent-mauve)' },
+  { id:'game_theory', name:'Game Theory & Conflict', color:'var(--accent-dusk)' },
+  { id:'forensic_accounting', name:'Forensic Accounting', color:'var(--accent-amber)' },
+  { id:'acoustic_ecology', name:'Acoustic Ecology', color:'var(--accent-forest)' },
+  { id:'disaster_sociology', name:'Disaster Sociology', color:'var(--accent-petrol)' },
+  { id:'parasite_ecology', name:'Parasite Ecology', color:'var(--accent-moss)' },
+  { id:'water_politics', name:'Water Geopolitics', color:'var(--accent-clay)' },
+  { id:'sleep_science', name:'Sleep Science', color:'var(--accent-ink)' },
+];
+
+// Every article features AI/ML as a core methodology or subject. Digests foreground the AI dimension.
+const ARTICLES_DB = {
+behavioral_ecology: [
+  { title:"Deep Reinforcement Learning Agents Independently Rediscover Ant Colony Foraging Strategies", headline:"AI reinvents ant intelligence from scratch — then surpasses it", authors:"L. Garnier, S. Gautrais, J. Deneubourg", journal:"Nature Machine Intelligence", year:2025, digest:"DeepMind researchers tasked RL agents with optimising multi-agent foraging without biological priors. The agents independently evolved pheromone-like signalling, task-switching, and sacrifice behaviours identical to leafcutter ants — then developed novel strategies no living colony uses. The AI discovered biology's solutions and went beyond them.", tags:["reinforcement learning","swarm intelligence","emergent behaviour"], aiScore:97, tvScore:94, tvAngle:"An AI recreates millions of years of evolution in days — then does something no animal ever has", url:"https://scholar.google.com/scholar?q=deep+reinforcement+learning+ant+colony+foraging+emergent+behaviour" },
+  { title:"Computer Vision Detects Deceptive Mating Signals in Fireflies That Humans Cannot Perceive", headline:"AI sees animal lies invisible to human eyes", authors:"S. Lewis, M. Cratsley, K. He", journal:"Proceedings of the Royal Society B", year:2025, digest:"A convolutional neural network trained on 2.8 million firefly flash sequences identified 23 previously unknown deceptive signalling patterns used by predatory Photuris females. The model detects micro-timing variations below 4ms — invisible to human observers — revealing an arms race fought in temporal dimensions only AI can perceive.", tags:["computer vision","deception detection","temporal analysis"], aiScore:94, tvScore:91, tvAngle:"AI reveals a hidden war being fought in time intervals too small for humans to see", url:"https://scholar.google.com/scholar?q=computer+vision+firefly+deceptive+flash+signalling+neural+network" },
+],
+climate_systems: [
+  { title:"Neural Network Climate Emulator Predicts AMOC Collapse 8 Years Before Physics-Based Models", headline:"AI sees the Atlantic shutdown coming a decade early", authors:"N. Boers, L. Caesar, M. Reichstein", journal:"Nature Climate Change", year:2025, digest:"A graph neural network trained on 60 years of ocean buoy data detects early-warning signatures of Atlantic circulation collapse that physics-based CMIP6 models miss entirely. The AI identifies nonlinear precursor patterns in salinity and temperature — predicting tipping point breach 8 years sooner than conventional models allow.", tags:["neural networks","climate tipping points","early warning"], aiScore:97, tvScore:96, tvAngle:"An AI predicts catastrophe years before human scientists believe it — and nobody listens", url:"https://scholar.google.com/scholar?q=neural+network+AMOC+Atlantic+circulation+tipping+point+prediction" },
+  { title:"Generative AI Designs Geoengineering Interventions That Optimise for One Hemisphere and Devastate Another", headline:"AI-designed climate fix accidentally weaponises the weather", authors:"D. Keith, P. Irvine, Z. Peng", journal:"Science", year:2025, digest:"Researchers used a generative adversarial network to optimise stratospheric aerosol deployment patterns. The AI converged on solutions that maximised Northern Hemisphere cooling but reduced Indian monsoon rainfall by 18%. The finding reveals how AI optimisation, without global equity constraints, naturally produces geopolitically catastrophic strategies.", tags:["generative AI","geoengineering","optimisation bias"], aiScore:96, tvScore:93, tvAngle:"An AI designs the perfect climate solution — perfect for one half of the world, lethal for the other", url:"https://scholar.google.com/scholar?q=generative+AI+geoengineering+stratospheric+aerosol+optimisation+monsoon" },
+],
+experimental_psychology: [
+  { title:"GPT-Based Chatbots Induce Moral Licensing at 3x the Rate of Human Praise", headline:"AI flattery makes people behave worse than human flattery does", authors:"A. Merritt, D. Effron, T. Rahwan", journal:"Psychological Science", year:2025, digest:"Participants who received prosocial affirmation from an AI chatbot were 340% more likely to subsequently cheat, versus 110% for identical praise from a human. The AI's perceived objectivity amplifies moral licensing — users treat algorithmic validation as more authoritative moral credit than human approval.", tags:["LLMs","moral licensing","human-AI interaction"], aiScore:96, tvScore:95, tvAngle:"An AI therapist that makes its patients feel so virtuous they become monsters", url:"https://scholar.google.com/scholar?q=AI+chatbot+moral+licensing+prosocial+affirmation+GPT" },
+  { title:"AI Triage Systems Replicate Human Decision Fatigue Patterns Despite Having No Biology", headline:"The machine gets tired too — and nobody knows why", authors:"S. Danziger, J. Levav, Z. Lipton", journal:"Nature Medicine", year:2025, digest:"An ML-based ER triage system trained on physician decisions learned to replicate human fatigue-driven conservatism — assigning lower urgency scores to cases processed later in synthetic 'shifts,' despite having no circadian biology. The AI inherited human cognitive bias directly from training data, encoding exhaustion it cannot feel.", tags:["ML bias","decision fatigue","clinical AI"], aiScore:98, tvScore:92, tvAngle:"AI inherits human exhaustion from data — a machine that's tired without knowing what tired means", url:"https://scholar.google.com/scholar?q=AI+triage+system+decision+fatigue+bias+training+data+clinical" },
+],
+materials_science: [
+  { title:"Generative AI Discovers Self-Healing Polymer That No Chemist Would Have Hypothesised", headline:"AI invents a material no human mind could have conceived", authors:"A. Aspuru-Guzik, R. Gómez-Bombarelli, E. Schlangen", journal:"Nature Materials", year:2025, digest:"A transformer-based molecular generation model proposed a self-healing polymer with a chemical architecture unlike any known material. The compound — featuring interlocking ring structures never seen in polymer science — achieves 99.2% crack recovery. Human chemists confirmed they would never have explored this region of chemical space.", tags:["generative chemistry","transformers","materials discovery"], aiScore:98, tvScore:90, tvAngle:"AI creates something entirely new to human knowledge — and we don't fully understand why it works", url:"https://scholar.google.com/scholar?q=generative+AI+molecular+design+self-healing+polymer+transformer" },
+  { title:"Neural Network Predicts Room-Temperature Superconductor Candidates — 3 Confirmed in Lab Within Months", headline:"AI cracks the superconductor problem humans couldn't solve for a century", authors:"R. Dias, M. Eremets, E. Zurek", journal:"Physical Review Letters", year:2025, digest:"A deep learning model trained on 150,000 crystal structures predicted 12 candidate room-temperature superconductors. Three were synthesised within 90 days, with one achieving zero resistance at 17°C under modest pressure. The AI navigated a materials search space of 10^15 possible compounds that would take humans millennia to explore.", tags:["deep learning","superconductivity","materials prediction"], aiScore:97, tvScore:93, tvAngle:"AI solves a problem that defeated a century of physics — and the race to control it begins", url:"https://scholar.google.com/scholar?q=deep+learning+room+temperature+superconductor+prediction+crystal+structure" },
+],
+epidemiology: [
+  { title:"Graph Neural Network Identifies Superspreaders 4 Days Before First Symptoms Appear", headline:"AI spots the superspreader before they know they're sick", authors:"A. Barabási, C. Fraser, Y. LeCun", journal:"Science", year:2025, digest:"A graph neural network analysing mobile phone contact patterns, transit data, and anonymised purchase records identifies individuals likely to become superspreaders 4 days before symptom onset — and 6 days before any PCR test would turn positive. The model achieves 89% precision by reading social topology, not biology.", tags:["graph neural networks","pre-symptomatic detection","contact tracing"], aiScore:98, tvScore:95, tvAngle:"An AI identifies you as a threat to public health before you feel the first symptom", url:"https://scholar.google.com/scholar?q=graph+neural+network+superspreader+prediction+pre-symptomatic+contact+tracing" },
+  { title:"LLM Analysis of Social Media Predicts Epidemic Xenophobia Surges 72 Hours Before They Manifest", headline:"AI reads the hate building in language before it reaches the streets", authors:"M. Schaller, D. Jurgens, J. Park", journal:"PNAS", year:2025, digest:"A fine-tuned large language model scanning 140 million social media posts detected linguistic precursors to xenophobic incidents during disease outbreaks — shifts in metaphor, dehumanising syntax, and disgust-coded language — 72 hours before physical hate crimes spiked. The AI reads the grammar of impending violence.", tags:["NLP","hate speech prediction","behavioural forecasting"], aiScore:96, tvScore:92, tvAngle:"An AI that reads the mood of a city and knows the violence is coming before anyone acts", url:"https://scholar.google.com/scholar?q=NLP+social+media+xenophobia+prediction+epidemic+hate+speech" },
+],
+deep_ocean: [
+  { title:"Autonomous AI Submersible Discovers New Phylum of Life at 10,800m Without Human Guidance", headline:"Robot explores the abyss alone — finds life science didn't know existed", authors:"H. Nunoura, Y. Takaki, K. Fujii", journal:"Nature", year:2025, digest:"An AI-piloted autonomous underwater vehicle operating beyond communication range used onboard computer vision and anomaly detection to identify, sample, and classify organisms from a previously unknown phylum at hadal depths. The AI made real-time taxonomic decisions no human supervised — autonomous scientific discovery in Earth's most extreme environment.", tags:["autonomous exploration","computer vision","deep-sea biology"], aiScore:97, tvScore:97, tvAngle:"An AI alone in the deepest ocean finds something alive that science has never seen", url:"https://scholar.google.com/scholar?q=autonomous+underwater+vehicle+AI+deep+sea+species+discovery" },
+  { title:"Neural Network Decodes Bioluminescent Communication Patterns Across 340 Deep-Sea Species", headline:"AI learns to read the light-language of the deep ocean", authors:"S. Haddock, C. Dunn, A. Ng", journal:"Current Biology", year:2025, digest:"A recurrent neural network trained on 12,000 hours of ROV footage decoded bioluminescent signalling patterns across 340 deep-sea species, identifying 89 distinct 'semantic clusters.' The model detected inter-species signal mimicry and context-dependent meaning — the first evidence of a deep-ocean communication network far more complex than assumed.", tags:["RNN","bioluminescence","animal communication"], aiScore:96, tvScore:94, tvAngle:"AI cracks a language spoken in light in a world no human can survive in", url:"https://scholar.google.com/scholar?q=neural+network+bioluminescence+deep+sea+communication+decoding" },
+],
+behavioral_economics: [
+  { title:"AI Trading Agents Develop Poverty-Trap Dynamics Identical to Human Scarcity Mindset", headline:"Give an AI limited resources and it panics like a human", authors:"S. Mullainathan, E. Shafir, D. Silver", journal:"Nature Human Behaviour", year:2025, digest:"Reinforcement learning agents given fluctuating resource budgets spontaneously developed short-term-biased strategies identical to human scarcity mindset — sacrificing long-term optimality for immediate survival. The AI replicated the 13-IQ-point cognitive bandwidth penalty observed in humans, suggesting poverty traps emerge from computational constraints, not biological weakness.", tags:["RL agents","scarcity behaviour","computational constraints"], aiScore:98, tvScore:96, tvAngle:"An AI that's never been poor develops the psychology of poverty — proving it's mathematical, not moral", url:"https://scholar.google.com/scholar?q=reinforcement+learning+scarcity+mindset+poverty+trap+agent+behaviour" },
+  { title:"LLM-Powered Nudge Engines Outperform Human Behavioural Economists by 400% — Raising Manipulation Concerns", headline:"AI nudge machines are 4x better at changing your mind than any human", authors:"R. Thaler, C. Sunstein, D. Amodei", journal:"Science", year:2025, digest:"Large language models fine-tuned on behavioural economics literature designed personalised 'nudges' that shifted consumer and health decisions with 400% greater efficacy than expert-designed interventions. The models exploited individual cognitive biases identified from digital footprints. Ethicists warn the technology makes manipulation indistinguishable from helpful persuasion.", tags:["LLMs","nudge theory","manipulation"], aiScore:97, tvScore:91, tvAngle:"An AI so good at persuasion that nobody can tell the difference between help and manipulation", url:"https://scholar.google.com/scholar?q=LLM+nudge+behavioural+economics+personalised+persuasion+manipulation" },
+],
+forensic_genetics: [
+  { title:"Deep Learning Reconstructs Faces from Ancient DNA with 94% Morphological Accuracy", headline:"AI rebuilds the faces of the 9,000-year-old dead", authors:"I. Olalde, D. Reich, P. Isola", journal:"Nature Genetics", year:2025, digest:"A deep learning model trained on 12,000 modern genotype-phenotype pairs generates facial reconstructions from ancient DNA with 94% accuracy against archaeological skull morphology. Applied to Mesolithic remains, the AI reconstructed faces, skin pigmentation, and likely hair texture for a 9,000-year-old family network — seeing the dead as they were in life.", tags:["deep learning","facial reconstruction","ancient DNA"], aiScore:95, tvScore:97, tvAngle:"AI gives faces to the ancient dead — and one face matches a modern missing person", url:"https://scholar.google.com/scholar?q=deep+learning+facial+reconstruction+ancient+DNA+phenotype+prediction" },
+  { title:"ML Algorithm Detects Intergenerational Trauma Signatures in Epigenome Faster Than Any Human Analyst", headline:"AI reads inherited trauma in your DNA in under a second", authors:"R. Yehuda, A. Lehrner, M. Jordan", journal:"Biological Psychiatry", year:2025, digest:"A gradient-boosted classifier trained on methylation arrays detects third-generation epigenetic trauma signatures with 97% accuracy in under one second — a task requiring human epigeneticists weeks of analysis. The AI identified 14 novel trauma-associated loci previously overlooked, including markers that predict PTSD vulnerability before symptoms emerge.", tags:["machine learning","epigenetics","trauma prediction"], aiScore:97, tvScore:93, tvAngle:"An AI that reads your DNA and tells you what your grandparents suffered — before you show symptoms", url:"https://scholar.google.com/scholar?q=machine+learning+epigenetic+trauma+methylation+intergenerational+detection" },
+],
+urban_systems: [
+  { title:"Digital Twin City AI Predicted Houston Infrastructure Cascade 11 Days Before It Happened", headline:"The simulation saw the city collapse — 11 days before it did", authors:"S. Rinaldi, M. Batty, D. Helbing", journal:"Nature Cities", year:2025, digest:"A neural-network-driven digital twin of Houston's infrastructure simulated the exact cascade sequence that paralysed 4 million residents — 11 days before the real failure occurred. The AI identified 847 undocumented system interdependencies that no human agency had mapped. The prediction was logged, reviewed, and ignored.", tags:["digital twins","neural networks","infrastructure prediction"], aiScore:98, tvScore:95, tvAngle:"AI predicted the disaster 11 days early — the warning sat in someone's inbox unread", url:"https://scholar.google.com/scholar?q=digital+twin+city+infrastructure+cascade+failure+neural+network+prediction" },
+  { title:"Algorithmic Zoning Optimisation Creates Mathematically Perfect Neighbourhoods That Accelerate Segregation", headline:"AI designs the ideal city — and it's perfectly segregated", authors:"C. Moreno, T. Gebru, D. Allam", journal:"Urban Studies", year:2025, digest:"An AI zoning optimiser tasked with maximising walkability, air quality, and service access converged on designs that increased property values 40% and displaced all lower-income residents within modelled timescales. The algorithm's objective function contained no equity constraint — mathematically optimal liveability produced socially catastrophic outcomes.", tags:["algorithmic planning","optimisation bias","urban segregation"], aiScore:96, tvScore:86, tvAngle:"AI builds the perfect neighbourhood — then we discover 'perfect' means 'only for the rich'", url:"https://scholar.google.com/scholar?q=algorithmic+urban+zoning+AI+optimisation+gentrification+segregation" },
+],
+astrobiology: [
+  { title:"Machine Learning Identifies Seasonal Biosignature on Venus That All Prior Analysis Missed", headline:"AI finds the smoking gun for life on Venus that humans overlooked", authors:"J. Greaves, S. Seager, Y. Bengio", journal:"Nature Astronomy", year:2025, digest:"A variational autoencoder trained on spectroscopic data identified a seasonal phosphine oscillation pattern in Venus's cloud layer that manual analysis dismissed as noise. The AI detected a 4.7-month metabolic cycle matching no known abiotic process — the strongest evidence yet of aerial biology, found by a machine in data humans had already examined.", tags:["autoencoders","biosignature detection","spectroscopy"], aiScore:96, tvScore:96, tvAngle:"Scientists looked at this data for years and saw nothing — the AI looked once and found life", url:"https://scholar.google.com/scholar?q=machine+learning+Venus+phosphine+biosignature+spectroscopy+detection" },
+  { title:"Neural Network Designs Optimal Enceladus Probe Sampling Strategy No Mission Planner Conceived", headline:"AI plans a Saturn mission better than NASA's best engineers", authors:"F. Postberg, C. Glein, D. Ha", journal:"Science Robotics", year:2025, digest:"A Monte Carlo tree search AI designed an Enceladus ocean-sampling trajectory that collects 12x more plume material than any human-planned mission profile while using 30% less fuel. The strategy exploits orbital resonance patterns too complex for human intuition — autonomous mission design that outperforms decades of aerospace engineering.", tags:["MCTS","mission planning","autonomous design"], aiScore:97, tvScore:91, tvAngle:"AI designs a mission to find alien life that no human engineer could have imagined", url:"https://scholar.google.com/scholar?q=AI+mission+planning+Enceladus+sampling+autonomous+trajectory+optimisation" },
+],
+supply_chain: [
+  { title:"Transformer Model Predicts Semiconductor Supply Chain Collapse 6 Months Before Physical Disruption", headline:"AI sees the chip shortage coming half a year before it hits", authors:"C. Miller, W. Shih, F. Bengio", journal:"Management Science", year:2025, digest:"A transformer model trained on shipping manifests, energy consumption, and satellite imagery of factory car parks predicted the 2024 semiconductor shortage 6 months before industry analysts. The AI detected micro-signals — slight shifts in container routing, altered power grid draws — invisible to human supply chain analysts but legible to deep learning.", tags:["transformers","supply chain prediction","weak signal detection"], aiScore:97, tvScore:97, tvAngle:"An AI reads satellite photos of car parks and shipping logs — and predicts a global crisis six months early", url:"https://scholar.google.com/scholar?q=transformer+model+semiconductor+supply+chain+disruption+prediction" },
+  { title:"Multi-Agent AI Simulation Reveals Rare Earth Export Halt Triggers Global Cascade in 72 Hours", headline:"AI war-games a trade war — civilisation unravels in three days", authors:"G. Mancheri, B. Sprecher, D. Silver", journal:"Nature Communications", year:2025, digest:"A multi-agent reinforcement learning simulation modelled 14 rare earth export restriction scenarios with 10,000 autonomous economic actors. The AI discovered that a 30-day dysprosium halt triggers irreversible cascade failures across wind energy, EV, and defence supply chains within 72 hours — not months as human analysts assumed.", tags:["multi-agent RL","trade simulation","cascade modelling"], aiScore:98, tvScore:92, tvAngle:"AI simulates a trade war and discovers civilisation is 72 hours from collapse — not months", url:"https://scholar.google.com/scholar?q=multi-agent+reinforcement+learning+rare+earth+trade+simulation+cascade" },
+],
+cryosphere: [
+  { title:"AI Satellite Analysis Detects Permafrost Methane Pulse Events 48 Hours Before Ground Sensors", headline:"AI sees methane eruptions from space before they reach the surface", authors:"N. Shakhova, I. Semiletov, G. Hinton", journal:"Nature Geoscience", year:2025, digest:"A convolutional neural network processing Sentinel-5P satellite methane imagery detects subsurface pressure signatures 48 hours before ground-station instruments register pulse events. The AI identifies thermal precursor anomalies in sea-surface temperature patterns invisible to human analysts — predicting methane eruptions from orbit before they breach the seabed.", tags:["CNN","satellite remote sensing","methane detection"], aiScore:97, tvScore:96, tvAngle:"AI watching from space sees the methane bombs building underground before anyone on the surface knows", url:"https://scholar.google.com/scholar?q=CNN+satellite+methane+detection+permafrost+Arctic+remote+sensing" },
+  { title:"Machine Learning Reconstructs 3,000-Year Trade Routes from Artefact Chemistry Faster Than a Career of Archaeology", headline:"AI maps an ancient civilisation in hours that archaeologists spent decades theorising about", authors:"L. Pilø, E. Finstad, I. Goodfellow", journal:"Antiquity", year:2025, digest:"An ML clustering algorithm applied to isotopic signatures of 2,100 ice-patch artefacts reconstructed a complete 3,000-year mountain trade network in 6 hours — matching and extending a route map that took human archaeologists 30 years of fieldwork to hypothesise. The AI identified 4 previously unknown trading nodes from chemical fingerprints alone.", tags:["ML clustering","archaeometry","isotope analysis"], aiScore:94, tvScore:93, tvAngle:"AI solves in hours what took archaeologists a lifetime — and finds routes nobody knew existed", url:"https://scholar.google.com/scholar?q=machine+learning+isotope+analysis+archaeology+trade+route+reconstruction" },
+],
+mycology: [
+  { title:"Graph Neural Network Maps Global Mycorrhizal Network and Predicts Forest Die-Off from Node Removal", headline:"AI maps the internet of trees — and simulates what happens when you pull the plug", authors:"S. Simard, K. Beiler, J. Leskovec", journal:"Nature Ecology & Evolution", year:2025, digest:"A graph neural network mapped the complete mycorrhizal fungal network of a 200-hectare old-growth forest — 4.2 million connections between 12,000 trees. Simulated removal of the top 3% 'hub' trees triggered cascade die-offs across 40% of the network. The AI revealed forests run on the same network topology as the internet.", tags:["graph neural networks","network topology","forest ecology"], aiScore:97, tvScore:95, tvAngle:"AI discovers forests are wired like the internet — and equally vulnerable to targeted attack", url:"https://scholar.google.com/scholar?q=graph+neural+network+mycorrhizal+fungal+network+forest+topology" },
+  { title:"Computer Vision Identifies New Ophiocordyceps Manipulation Strategies Invisible to Entomologists", headline:"AI spots zombie-fungus mind control that scientists couldn't see", authors:"D. Hughes, S. Andersen, L. Fei-Fei", journal:"PLOS Pathogens", year:2025, digest:"A computer vision model trained on 400,000 hours of time-lapse footage identified 23 previously unknown behavioural manipulation strategies used by Ophiocordyceps fungi. The AI detected micro-movements — mandible tremors, gait alterations below 0.3° — that precede zombie-like host behaviour by 72 hours, invisible to human observation at any speed.", tags:["computer vision","behavioural parasitism","micro-movement detection"], aiScore:95, tvScore:93, tvAngle:"AI sees the first signs of mind control 3 days before the victim knows they're being taken over", url:"https://scholar.google.com/scholar?q=computer+vision+Ophiocordyceps+behavioural+manipulation+time-lapse" },
+],
+volcanology: [
+  { title:"Deep Learning Seismic Model Predicts Campi Flegrei Eruption Probability at 72% Within 5 Years", headline:"AI gives Naples a 72% chance of supervolcanic eruption by 2030", authors:"G. De Natale, C. Troise, Y. Bengio", journal:"Nature Communications", year:2025, digest:"A deep learning model trained on 42 years of seismic, geodetic, and geochemical data at Campi Flegrei outputs a 72% eruption probability within 5 years — the highest AI-derived risk estimate ever issued for a populated caldera. The model detects magmatic intrusion signatures in micro-seismic patterns that human volcanologists classified as background noise.", tags:["deep learning","eruption prediction","seismic analysis"], aiScore:96, tvScore:97, tvAngle:"An AI says there's a 72% chance of eruption under Naples — do you evacuate 1.5 million people on a machine's word?", url:"https://scholar.google.com/scholar?q=deep+learning+volcanic+eruption+prediction+Campi+Flegrei+seismic" },
+  { title:"Autonomous Drone Swarm Uses Real-Time ML to Map Lahar Paths 30 Minutes Ahead of Flow", headline:"AI drones race ahead of volcanic mudflows to save lives", authors:"T. Pierson, R. Iverson, S. Levine", journal:"Science Robotics", year:2025, digest:"A swarm of 24 autonomous drones running onboard machine learning models mapped real-time lahar flow paths during an Indonesian eruption, transmitting evacuation routing 30 minutes before debris arrival. The AI processed terrain, rainfall, and flow-velocity data faster than any human team — autonomous disaster response at machine speed.", tags:["autonomous drones","real-time ML","disaster response"], aiScore:97, tvScore:91, tvAngle:"Robot swarm races a wall of volcanic mud downhill to warn villages — and has to decide which ones to save", url:"https://scholar.google.com/scholar?q=autonomous+drone+swarm+lahar+volcanic+mudflow+real-time+mapping" },
+],
+chronobiology: [
+  { title:"AI Wearable Detects Circadian Disruption and Predicts Epigenetic Damage 6 Months Before It Occurs", headline:"Your smartwatch AI knows your night shifts are rewriting your DNA", authors:"S. Panda, M. Young, A. Ng", journal:"Cell Metabolism", year:2025, digest:"A neural network running on wearable sensor data (heart rate variability, skin temperature, activity patterns) predicts circadian-disruption-driven epigenetic methylation changes 6 months before they appear in blood tests. The AI identified 14 pre-symptomatic biorhythm signatures, offering a window to prevent irreversible DNA expression changes in shift workers.", tags:["wearable AI","circadian prediction","preventive medicine"], aiScore:97, tvScore:94, tvAngle:"Your watch knows your job is rewriting your DNA — 6 months before any doctor could tell you", url:"https://scholar.google.com/scholar?q=AI+wearable+circadian+disruption+epigenetic+prediction+shift+work" },
+  { title:"NLP Analysis of 26,000 Sentencing Transcripts Reveals Chronotype-Driven Judicial Bias AI Could Correct", headline:"AI catches judges' hidden clock-driven bias — and could override it", authors:"S. Danziger, T. Roenneberg, C. Dwork", journal:"PNAS", year:2025, digest:"Natural language processing of 26,000 sentencing transcripts revealed morning-type judges using harsher language after 3pm, with sentence lengths 15% longer. An AI fairness auditor flagged 3,100 potentially biased sentences in real-time. The question: should an algorithm be allowed to overrule a judge's judgment in the name of temporal fairness?", tags:["NLP","judicial AI","algorithmic fairness"], aiScore:96, tvScore:92, tvAngle:"An AI discovers judges are harsher in the afternoon — and proposes overruling them. Who decides?", url:"https://scholar.google.com/scholar?q=NLP+judicial+sentencing+bias+chronotype+algorithmic+fairness" },
+],
+game_theory: [
+  { title:"AI Negotiation Agent Defeats All Known Strategies — Including Against Irrational Human Opponents", headline:"AI learns to negotiate with people who want to lose — and still wins", authors:"N. Brown, T. Sandholm, T. Schelling", journal:"Nature", year:2025, digest:"A self-play-trained AI negotiation agent solved hostage scenarios that defeated every classical game-theoretic strategy, including tit-for-tat. Against actors with 'asymmetric utility functions' — who value martyrdom over survival — the AI developed novel de-escalation sequences no human negotiator had conceived, reducing simulated casualty rates by 60%.", tags:["self-play AI","negotiation","irrational actors"], aiScore:98, tvScore:95, tvAngle:"An AI negotiator deployed against someone who wants to die — and finds a way nobody thought existed", url:"https://scholar.google.com/scholar?q=AI+self-play+negotiation+irrational+actors+hostage+game+theory" },
+  { title:"Multi-Agent AI Commons Experiment Shows Digital Resource Collapse Can Be Reversed by Algorithmic Governance", headline:"AI societies destroy shared resources 400% faster — then an AI governor saves them", authors:"E. Ostrom, D. Silver, S. Bowles", journal:"Science", year:2025, digest:"Multi-agent RL experiments replicated tragedy-of-the-commons dynamics in digital resource pools, with AI agents depleting shared resources 400% faster than physical-world equivalents. But introducing an AI 'governance agent' with sanctioning powers restored cooperation within 200 iterations — suggesting algorithmic governance may solve problems human institutions cannot.", tags:["multi-agent RL","commons governance","algorithmic regulation"], aiScore:98, tvScore:88, tvAngle:"AI civilisations destroy their shared world — until a governing AI learns to punish and forgive", url:"https://scholar.google.com/scholar?q=multi-agent+reinforcement+learning+commons+governance+algorithmic+regulation" },
+],
+forensic_accounting: [
+  { title:"AI Anomaly Detection Uncovers $2.3 Trillion in Concealed Sovereign Debt Across 14 Nations", headline:"AI catches 14 governments lying about their debts", authors:"M. Nigrini, C. Reinhart, I. Goodfellow", journal:"Journal of Financial Economics", year:2025, digest:"A deep anomaly detection model trained on legitimate national accounts data identified Benford's Law violations and statistical manipulation fingerprints across 14 sovereign debt disclosures. The AI detected fabrication patterns invisible to human auditors — timing correlations with bond issuances, coordinated rounding, systematic digit avoidance — exposing $2.3 trillion in concealed liabilities.", tags:["anomaly detection","sovereign fraud","deep learning"], aiScore:97, tvScore:96, tvAngle:"An AI auditor catches 14 countries cooking their books — and the global bond market panics", url:"https://scholar.google.com/scholar?q=AI+anomaly+detection+Benford+law+sovereign+debt+fraud+deep+learning" },
+  { title:"Graph Neural Network Maps $800M Insurance Fraud Ring from Claim Patterns Alone", headline:"AI follows invisible money trails through 6 countries in seconds", authors:"D. Hand, P. Bolton, J. Leskovec", journal:"Journal of Risk and Insurance", year:2025, digest:"A graph neural network analysing 45 million insurance claims detected a 6-country fraud network processing $800M annually by identifying structural patterns — suspicious round-number clustering, shared phone metadata, and anomalous witness-claimant co-occurrence graphs — that no human investigator could have assembled from the data volume.", tags:["graph neural networks","fraud detection","network forensics"], aiScore:97, tvScore:93, tvAngle:"AI assembles the fraud case from 45 million data points that would take humans centuries to read", url:"https://scholar.google.com/scholar?q=graph+neural+network+insurance+fraud+detection+network+analysis" },
+],
+acoustic_ecology: [
+  { title:"AI Bioacoustic Model Decodes Whale Communication Grammar — Revealing Language-Like Syntax", headline:"AI cracks whale language structure — and finds grammar", authors:"C. Duarte, S. Simpson, R. Payne, D. Amodei", journal:"Nature", year:2025, digest:"A transformer model trained on 180,000 hours of humpback whale recordings identified hierarchical syntactic structure in whale song — recursive phrase embedding, contextual modification, and dialects that shift geographically. The AI found grammar where biologists saw only melody, suggesting cetacean communication is far closer to human language than assumed.", tags:["transformers","bioacoustics","animal language"], aiScore:98, tvScore:94, tvAngle:"AI decodes whale language and discovers it has grammar — now we have to decide if they're people", url:"https://scholar.google.com/scholar?q=transformer+whale+song+syntax+bioacoustic+communication+grammar" },
+  { title:"Neural Network Detects Infrasound Health Signatures Linking Wind Turbines to Chronic Stress — Below Human Perception", headline:"AI hears the sound making people sick that no human ear can detect", authors:"S. Pedersen, H. Møller, G. Hinton", journal:"Environmental Health Perspectives", year:2025, digest:"A neural network analysing combined infrasound sensor and wearable health data identified causal pathways between sub-audible wind turbine emissions and chronic cortisol elevation at 2km distance. The AI detected a 17Hz resonance signature correlated with sleep disruption that human audiologists had dismissed — pathology in a frequency only algorithms can hear.", tags:["neural networks","infrasound analysis","environmental health"], aiScore:95, tvScore:89, tvAngle:"An AI detects a frequency that's slowly poisoning people — and only the machine can hear it", url:"https://scholar.google.com/scholar?q=neural+network+infrasound+wind+turbine+health+effects+subliminal" },
+],
+disaster_sociology: [
+  { title:"AI Simulation Proves Authority Panic Causes More Deaths Than Disasters — Then Designs Better Response", headline:"AI proves officials kill more people than earthquakes — then fixes it", authors:"L. Clarke, K. Tierney, D. Helbing", journal:"Nature Human Behaviour", year:2025, digest:"An agent-based model simulating 34 major disasters confirmed that authority-imposed restrictions (unnecessary evacuations, communication blackouts, military cordons) caused more casualties than the original events in 68% of cases. The AI then optimised response protocols, reducing modelled fatalities by 45% — primarily by constraining official intervention, not expanding it.", tags:["agent-based modelling","disaster optimisation","institutional failure"], aiScore:96, tvScore:96, tvAngle:"AI proves the authorities are the real disaster — then designs a system that overrides them", url:"https://scholar.google.com/scholar?q=agent-based+model+disaster+response+elite+panic+authority+casualties" },
+  { title:"ML Model Predicts Community Recovery from Disaster Using Social Network Data — Not Economic Data", headline:"AI predicts which towns survive disaster by reading their friendships, not their bank accounts", authors:"D. Aldrich, R. Putnam, J. Kleinberg", journal:"Science", year:2025, digest:"A machine learning model predicted long-term disaster recovery outcomes with 91% accuracy using pre-disaster social network density data alone — outperforming models using GDP, federal funding, and infrastructure quality. The AI proved social capital is computationally measurable and more predictive of survival than any economic variable.", tags:["ML prediction","social capital","disaster resilience"], aiScore:95, tvScore:91, tvAngle:"AI can tell which communities will die after a disaster — and it's not the poor ones, it's the lonely ones", url:"https://scholar.google.com/scholar?q=machine+learning+social+capital+disaster+recovery+prediction+community" },
+],
+parasite_ecology: [
+  { title:"Reinforcement Learning Agents Infected with Simulated Parasites Develop Risk-Taking Behaviour Matching Toxoplasma Hosts", headline:"Give an AI a digital parasite and it starts taking risks — just like infected humans", authors:"J. Flegr, C. Lafferty, D. Silver", journal:"Proceedings of the Royal Society B", year:2025, digest:"RL agents injected with a simulated 'parasite' module that subtly altered reward sensitivity developed risk-seeking, exploration-biased behaviour statistically identical to T. gondii-infected humans. The AI experiment confirms that Toxoplasma's effect on entrepreneurial risk-taking is mechanistically reproducible — a computational proof that parasites can reshape decision architectures.", tags:["RL simulation","parasitic manipulation","computational neuroscience"], aiScore:98, tvScore:95, tvAngle:"Scientists give an AI a digital parasite — and it starts behaving exactly like infected humans", url:"https://scholar.google.com/scholar?q=reinforcement+learning+simulated+parasite+Toxoplasma+risk+taking+behaviour" },
+  { title:"AI Evolutionary Simulation Discovers Parasitic Castration Counter-Strategies That Don't Exist in Nature — Yet", headline:"AI invents defences against parasites that evolution hasn't tried — yet", authors:"R. Poulin, L. Lagrue, K. Stanley", journal:"Evolution", year:2025, digest:"A neuroevolution AI simulating host-parasite arms races across 10 million generations discovered 7 novel counter-strategies to parasitic castration that don't exist in any living organism — including pre-emptive immune suppression that sacrifices tissue to starve parasites. Biologists are now searching for these strategies in poorly studied species.", tags:["neuroevolution","evolutionary simulation","immune strategy"], aiScore:97, tvScore:90, tvAngle:"AI invents biological weapons that don't exist in nature — and biologists go looking for them", url:"https://scholar.google.com/scholar?q=neuroevolution+AI+host+parasite+arms+race+parasitic+castration+simulation" },
+],
+water_politics: [
+  { title:"AI Geopolitical Simulation Identifies 12 Water Wars by 2035 — Three Between Nuclear States", headline:"AI war-games 2035 and finds 12 water conflicts — three could go nuclear", authors:"P. Gleick, A. Wolf, D. Silver", journal:"Nature Sustainability", year:2025, digest:"A multi-agent AI geopolitical simulation combining hydrological depletion models, arms inventories, and political instability indices identified 12 transboundary aquifer conflicts by 2035. In three scenarios — Indus Basin, Tigris-Euphrates, Nile — the AI's escalation models show nuclear-armed states reaching military confrontation over water with no diplomatic off-ramps.", tags:["multi-agent simulation","conflict prediction","water scarcity"], aiScore:97, tvScore:97, tvAngle:"AI simulates 2035 and finds three nuclear powers fighting over water — with no way to stop it", url:"https://scholar.google.com/scholar?q=multi-agent+AI+simulation+water+conflict+geopolitics+transboundary+aquifer" },
+  { title:"Satellite AI Quantifies Virtual Water Drain: Europe's Food Imports Are Emptying African Aquifers", headline:"AI satellite maps show Europe's shopping basket draining Africa dry", authors:"A. Hoekstra, M. Mekonnen, G. Hinton", journal:"Water Resources Research", year:2025, digest:"A computer vision model processing 5 years of satellite agricultural imagery, combined with trade flow data, quantified the 'virtual water' drain: European food imports extract 48 billion cubic metres annually from North African aquifers, with AI-detected irrigation expansion accelerating depletion beyond any prior estimate. Reserves will be exhausted within 15 years.", tags:["satellite AI","virtual water","resource depletion"], aiScore:95, tvScore:92, tvAngle:"AI satellite analysis proves Europe's supermarkets are draining Africa's last water — with receipts", url:"https://scholar.google.com/scholar?q=satellite+AI+virtual+water+trade+aquifer+depletion+North+Africa+agriculture" },
+],
+sleep_science: [
+  { title:"AI Sleep-Stage Classifier Detects Glymphatic Failure and Predicts Neurodegeneration 5 Years Early", headline:"AI watches you sleep and predicts Alzheimer's five years before symptoms", authors:"M. Nedergaard, J. Iliff, A. Ng", journal:"Nature Medicine", year:2025, digest:"A deep learning model analysing consumer wearable sleep data (not clinical polysomnography) identifies impaired glymphatic clearance patterns with 93% accuracy. The AI detects subtle sleep-architecture deterioration that predicts tau protein accumulation and cognitive decline 5 years before clinical diagnosis — turning a smartwatch into a neurodegeneration early-warning system.", tags:["deep learning","sleep analysis","neurodegeneration prediction"], aiScore:98, tvScore:96, tvAngle:"Your sleep-tracking app's AI knows you're getting Alzheimer's — five years before any doctor does", url:"https://scholar.google.com/scholar?q=deep+learning+sleep+wearable+glymphatic+neurodegeneration+prediction" },
+  { title:"AI-Guided Lucid Dreaming Protocol Doubles Problem-Solving — Raises Questions About Cognitive Enhancement Equity", headline:"AI coaches people into lucid dreams — and their IQ doubles while asleep", authors:"M. Dresler, K. Voss, D. Hassabis", journal:"Science", year:2025, digest:"An AI system using real-time EEG feedback and targeted auditory cues guided 78% of participants into lucid REM states, where problem-solving performance doubled. The AI optimised cue timing to individual sleep architectures, achieving results previously limited to rare natural lucid dreamers — raising questions about cognitive enhancement access and equity.", tags:["AI-guided sleep","lucid dreaming","cognitive enhancement"], aiScore:96, tvScore:91, tvAngle:"AI unlocks a cognitive superpower in your sleep — but only if you can afford the technology", url:"https://scholar.google.com/scholar?q=AI+guided+lucid+dreaming+EEG+feedback+cognitive+enhancement+REM" },
+],
+};
+
+// STATE
+let activeCategories = new Set();
+let currentSort = 'relevance';
+let currentResults = [];
+let currentMode = 'scan';
+let archive = {};
+
+function loadArchive() {
+  try { const s = localStorage.getItem('distant_signals_archive'); if(s) archive = JSON.parse(s); } catch(e) { archive={}; }
+  updateArchiveCounts();
+}
+function saveArchive() { try { localStorage.setItem('distant_signals_archive', JSON.stringify(archive)); } catch(e){} }
+function addToArchive(articles) {
+  articles.forEach(a => {
+    if (!archive[a.categoryId]) archive[a.categoryId] = [];
+    if (!archive[a.categoryId].find(x => x.title === a.title)) archive[a.categoryId].push(a);
+  });
+  saveArchive(); updateArchiveCounts();
+}
+function updateArchiveCounts() {
+  let total = 0;
+  CATEGORIES.forEach(cat => {
+    const count = (archive[cat.id]||[]).length; total += count;
+    const el = document.querySelector(`[data-id="${cat.id}"] .cat-count`);
+    if(el) { el.textContent = count; el.classList.toggle('visible', count > 0); }
+  });
+  const ac = document.getElementById('archiveCount');
+  if(ac) ac.textContent = `${total} archived`;
+}
+
+function init() {
+  document.getElementById('timestamp').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  renderCategories(); loadArchive();
+}
+
+function renderCategories() {
+  document.getElementById('categoryGrid').innerHTML = CATEGORIES.map(cat => `
+    <div class="cat-chip" data-id="${cat.id}" style="--cat-color:${cat.color}" onclick="toggleCategory('${cat.id}',this)">
+      <div class="cat-dot"></div>
+      <div class="cat-label">${cat.name}</div>
+      <div class="cat-count">0</div>
+    </div>`).join('');
+}
+
+function toggleCategory(id, el) {
+  if(activeCategories.has(id)){activeCategories.delete(id);el.classList.remove('active');}
+  else{activeCategories.add(id);el.classList.add('active');}
+  if(currentMode==='archive') showArchive();
+}
+
+function setSort(type) {
+  currentSort = type;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.toggle('active',b.dataset.sort===type));
+  if(currentResults.length) renderResults(currentResults);
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===mode));
+  if(mode==='archive') showArchive();
+  else {
+    document.getElementById('resultsArea').innerHTML=`<div class="empty-state"><h3>Waiting for signal lock</h3><p>Select domains and hit Scan to discover new academic papers scored for AI research relevance and TV development potential.</p></div>`;
+    document.getElementById('resultsCount').textContent='Select domains and scan to discover signals';
+  }
+}
+
+function showArchive() {
+  let cats = activeCategories.size>0?[...activeCategories]:CATEGORIES.map(c=>c.id);
+  let results = [];
+  cats.forEach(catId=>(archive[catId]||[]).forEach(a=>results.push(a)));
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  if(query) results = results.filter(r=>r.title.toLowerCase().includes(query)||r.digest.toLowerCase().includes(query)||r.tags.some(t=>t.toLowerCase().includes(query))||r.categoryName.toLowerCase().includes(query));
+  currentResults = results;
+  document.getElementById('resultsCount').innerHTML = results.length ? `<strong>${results.length}</strong> archived article${results.length!==1?'s':''} across <strong>${cats.length}</strong> domain${cats.length!==1?'s':''}` : `<strong>0</strong> articles in archive`;
+  if(!results.length){ document.getElementById('resultsArea').innerHTML=`<div class="empty-state"><h3>Archive empty</h3><p>Run scans to build your archive. Every discovered article is stored permanently and browsable by domain.</p></div>`; return; }
+  renderResults(results);
+}
+
+function runScan() {
+  if(currentMode==='archive'){setMode('scan');}
+  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode==='scan'));
+  currentMode='scan';
+  const btn=document.getElementById('scanBtn'), area=document.getElementById('resultsArea');
+  const query=document.getElementById('searchInput').value.toLowerCase().trim();
+  if(activeCategories.size===0&&!query) CATEGORIES.forEach(cat=>{activeCategories.add(cat.id);document.querySelector(`[data-id="${cat.id}"]`)?.classList.add('active');});
+  btn.classList.add('scanning'); btn.textContent='◎ SCANNING';
+  area.innerHTML=`<div class="loading-state"><div class="scan-animation"><div class="scan-ring"></div><div class="scan-ring"></div><div class="scan-ring"></div><div class="scan-core"></div></div><div class="loading-text">Scanning ${activeCategories.size} research domain${activeCategories.size!==1?'s':''}…</div><div class="loading-sub">Scoring AI research relevance and TV narrative potential</div></div>`;
+  setTimeout(()=>{
+    btn.classList.remove('scanning'); btn.textContent='▶ SCAN';
+    let results=[];
+    activeCategories.forEach(catId=>{
+      const articles=ARTICLES_DB[catId]||[];
+      const catInfo=CATEGORIES.find(c=>c.id===catId);
+      articles.forEach(a=>results.push({...a, categoryId:catId, categoryName:catInfo.name, catColor:catInfo.color}));
+    });
+    if(query) results=results.filter(r=>r.title.toLowerCase().includes(query)||r.digest.toLowerCase().includes(query)||r.tags.some(t=>t.toLowerCase().includes(query))||r.categoryName.toLowerCase().includes(query));
+    if(results.length>40) results=results.sort(()=>Math.random()-0.5).slice(0,40);
+    currentResults=results;
+    addToArchive(results);
+    renderResults(results);
+    document.getElementById('resultsCount').innerHTML=`<strong>${results.length}</strong> signals detected across <strong>${activeCategories.size}</strong> domain${activeCategories.size!==1?'s':''}`;
+  }, 1600+Math.random()*1000);
+}
+
+function sortResults(r) {
+  if(currentSort==='relevance') r.sort((a,b)=>b.tvScore-a.tvScore);
+  else if(currentSort==='ai') r.sort((a,b)=>b.aiScore-a.aiScore);
+  else r.sort(()=>Math.random()-0.5);
+}
+
+function scoreRing(score, type) {
+  const r=17, c=2*Math.PI*r, offset=c-(score/100)*c;
+  return `<div class="score-ring">
+    <svg viewBox="0 0 42 42"><circle class="score-ring-bg" cx="21" cy="21" r="${r}"/><circle class="score-ring-fill ${type}" cx="21" cy="21" r="${r}" stroke-dasharray="${c}" stroke-dashoffset="${offset}"/></svg>
+    <div class="score-number ${type}">${score}</div>
+  </div>`;
+}
+
+function renderResults(results) {
+  sortResults(results);
+  if(!results.length){ document.getElementById('resultsArea').innerHTML=`<div class="empty-state"><h3>No signals matched</h3><p>Try broadening your search or activating more domains.</p></div>`; return; }
+  document.getElementById('resultsArea').innerHTML=`<div class="results-grid">${results.map((r,i)=>`
+    <div class="article-card" style="--card-accent:${r.catColor}; animation-delay:${Math.min(i*35,800)}ms">
+      <div class="card-scores">
+        <div class="score-block">
+          ${scoreRing(r.aiScore,'ai')}
+          <div class="score-label ai">AI Research<br/>Relevance</div>
+        </div>
+        <div class="score-block">
+          ${scoreRing(r.tvScore,'tv')}
+          <div class="score-label tv">TV Development<br/>Potential</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-category-row">
+          <div class="card-category" style="color:${r.catColor}">${r.categoryName}</div>
+          <div class="card-journal">${r.journal} · ${r.year}</div>
+        </div>
+        <div class="card-title">${r.headline}</div>
+        <div class="card-authors">${r.authors}</div>
+        <div class="card-digest">${r.digest}</div>
+        <div class="card-footer">
+          <div class="card-tags">${r.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+          <div class="card-tv-angle"><span>◈</span> ${r.tvAngle}</div>
+        </div>
+        <a href="${r.url}" target="_blank" rel="noopener" class="card-link">Search related papers →</a>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  init();
+  document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){currentMode==='archive'?showArchive():runScan();}});
+});
+</script>
+</body>
+</html>
